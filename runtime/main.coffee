@@ -5,7 +5,6 @@ betterweb.main = () ->
         arg += '.bc' unless arg.match(/.bc$/)
         betterweb.load(arg)
 
-
 betterweb.load = (path) ->
-    data = fs.readFileSync(path, encoding='utf8')
+    data = JSON.parse fs.readFileSync(path, encoding='utf8')
     console.log data

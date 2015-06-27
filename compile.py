@@ -1,5 +1,5 @@
 from parser import grammar
-import sys
+import json, sys
 
 def post_tuple(env, loc):
     return
@@ -17,4 +17,4 @@ for filename in sys.argv[1:]:
     parser.from_file(globals(), env, filename)
 
     with open(filename + '.bc', 'w') as fd:
-        fd.write(str(env))
+        json.dump(env, fd)
