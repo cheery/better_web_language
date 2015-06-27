@@ -1,1 +1,11 @@
-file => hello: int
+file =>
+    action
+    pass(action): file action
+
+action =>
+    hello: int
+    op(symbol ints): symbol ints newline
+
+ints =>
+    first: int
+    append: ints int

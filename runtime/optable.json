@@ -1,0 +1,6 @@
+[
+    [1, "int32", ["dst", "int32"]],
+    [2, "printcall", ["src"]],
+    [3, "return", ["src"]],
+    [255, "nop", []]
+]
