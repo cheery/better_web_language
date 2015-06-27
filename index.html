@@ -1,0 +1,17 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Test page for trying out runtime.js</title>
+    <script type="text/javascript" src="runtime.js"></script>
+</head>
+<body>
+    <script type="text/javascript">
+        window.onload = function () {
+            betterweb.load('sample.bc', function(data) {
+                console.log(data);
+            });
+        }
+    </script>
+</body>
+</html>
