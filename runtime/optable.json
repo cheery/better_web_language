@@ -1,6 +1,8 @@
 [
     [1, "int32", ["dst", "int32"]],
-    [2, "printcall", ["src"]],
+    [2, "string", ["dst", "string"]],
     [3, "return", ["src"]],
+    [4, "getglobal", ["dst", "string"]],
+    [5, "call", ["dst", "src", "src*"]],
     [255, "nop", []]
 ]

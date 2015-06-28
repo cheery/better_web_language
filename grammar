@@ -1,11 +1,32 @@
 file =>
+    statement
+    pass(statement): file statement
+
+statement =>
+    expr
+    pass(actions):
+        asm:"asm" indent actions dedent
+
+actions =>
     action
-    pass(action): file action
+    pass(action): actions action
 
 action =>
     hello: int
     op(symbol ints): symbol ints newline
 
+expr =>
+    call(expr arguments):
+        expr lp:"(" arguments rp:")"
+    constant_int: int
+    constant_string: string
+    lookup: symbol
+
+arguments =>
+    empty:
+    first: expr
+    append(seq expr): seq=arguments comma:"," expr
+
 ints =>
-    first: int
+    first:  int
     append: ints int

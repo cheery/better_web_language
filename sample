@@ -1,5 +1,8 @@
-1  0  5 0 0 0
-2  0
-int32 1 15
-printcall 1
-3  0
+print("hello internet!")
+print(1, 2, 3)
+
+# Might need this later, so that's
+# why I spent effort to retain it.
+asm
+    int32 0 5
+    1 0 0 0 0 0
