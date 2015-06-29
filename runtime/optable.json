@@ -4,5 +4,7 @@
     [3, "return", ["src"]],
     [4, "getglobal", ["dst", "string"]],
     [5, "call", ["dst", "src", "src*"]],
+    [6, "setglobal", ["string", "src"]],
+    [7, "closure", ["dst", "function_id"]],
     [255, "nop", []]
 ]

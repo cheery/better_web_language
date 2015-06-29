@@ -14,6 +14,9 @@ def post_hello(env, loc, num):
 def post_op(env, loc, opname, nums):
     env.append([opname.value] + [int(num.value) for num in nums])
 
+def post_empty(env, loc):
+    return []
+
 def post_first(env, loc, num):
     return [num]
 
@@ -21,12 +24,27 @@ def post_append(env, loc, seq, num):
     seq.append(num)
     return seq
 
+def pre_function(env, loc):
+    return env.closure()
+
+def post_function(env, loc, block):
+    dst = env.getreg()
+    env.append(['int32', dst, 0])
+    env.append(['return', dst])
+    parent = env.parent
+    dst = parent.getreg()
+    parent.append(['closure', dst, env.close()])
+    return dst
+
 def post_call(env, loc, callee, arguments):
     dst = env.getreg()
     env.append(['call'] +
         [dst, callee,
          [arg for arg in arguments]])
     return dst
+
+def post_assign(env, loc, symbol, expr):
+    env.append(['setglobal', symbol.value, expr])
 
 def post_lookup(env, loc, symbol):
     dst = env.getreg()
@@ -60,6 +78,8 @@ tptab = {
     "src*": (lambda xs:
         struct.pack('H', len(xs)) +
         ''.join(struct.pack('B', x) for x in xs)),
+    "function_id": (lambda xs:
+        struct.pack('H', xs.function_id)),
 }
 
 def op_encode(item):
@@ -72,9 +92,15 @@ def op_encode(item):
     return data
 
 class Env(object):
-    def __init__(self):
+    def __init__(self, parent=None):
+        self.parent = parent
+        self.closures = []
         self.sequence = []
         self.regc = 0
+        self.function_id = None
+
+    def __len__(self):
+        return len(self.sequence)
 
     def __iter__(self):
         return iter(self.sequence)
@@ -87,17 +113,41 @@ class Env(object):
         self.regc += 1
         return reg
 
+    def closure(self):
+        env = Env(self)
+        self.closures.append(env)
+        return env
+
+    def close(self):
+        return self
+
+    def closures_list(self, out=None):
+        out = [] if out is None else out
+        out.append(self)
+        for closure in self.closures:
+            closure.closures_list(out)
+        return out
+
 for filename in sys.argv[1:]:
     env = Env()
     parser.from_file(globals(), env, filename)
     dst = env.getreg()
     env.append(['int32', dst, 0])
     env.append(['return', dst])
+    entry_closure = env.close()
 
+    closures = entry_closure.closures_list()
+    for function_id, closure in enumerate(closures):
+        closure.function_id = function_id
+        if False:
+            print function_id
+            for line in closure:
+                print "  ", line
     with open(filename + '.bc', 'w') as fd:
-        fd.write(struct.pack('I', env.regc))
-        for item in env:
-            if isinstance(item, int):
-                fd.write(struct.pack('B', item))
-            else:
+        fd.write(struct.pack('I', len(closures)))
+        for env in closures:
+            bytelength = len(''.join(op_encode(item)
+                for item in env))
+            fd.write(struct.pack('II', bytelength, env.regc))
+            for item in env:
                 fd.write(op_encode(item))

@@ -11,9 +11,20 @@ betterweb.load = (url, callback) ->
     req.send()
 
 betterweb.load_from_arraybuffer = (data) ->
+    view = new DataView(data, 0)
+    function_count = view.getUint32(0, true)
+    functions = []
+    offset = 4
+    for function_id in [0...function_count]
+        length = view.getUint32(offset, true)
+        regc   = view.getUint32(offset+4, true)
+        func_data = data.slice(offset+8, offset+8+length)
+        offset += 8+length
+        functions.push {regc, data:func_data}
+
     # Later this should return a callable,
     # which produces a module object.
-    betterweb.evaluate(data)
+    betterweb.evaluate(functions, functions[0])
 
 main_nodejs = () ->
     fs = require 'fs'

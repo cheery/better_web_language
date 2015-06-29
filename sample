@@ -1,8 +1,4 @@
-print("hello internet!")
-print(1, 2, 3)
+main = ():
+    print("hello internets!")
 
-# Might need this later, so that's
-# why I spent effort to retain it.
-asm
-    int32 0 5
-    1 0 0 0 0 0
+main()

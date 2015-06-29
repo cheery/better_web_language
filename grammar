@@ -1,8 +1,9 @@
 file =>
     statement
-    pass(statement): file statement
+    pass(statement): file newline statement
 
 statement =>
+    assign(lhs rhs): lhs=symbol assign:"=" rhs=expr
     expr
     pass(actions):
         asm:"asm" indent actions dedent
@@ -21,11 +22,17 @@ expr =>
     constant_int: int
     constant_string: string
     lookup: symbol
+    function(block):
+        lp:"(" rp:")" colon:":" indent block dedent
 
 arguments =>
     empty:
     first: expr
     append(seq expr): seq=arguments comma:"," expr
+
+block =>
+    pass(statement): statement
+    pass(statement): block newline statement
 
 ints =>
     first:  int
