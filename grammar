@@ -1,20 +1,10 @@
 file =>
     statement
-    pass(statement): file newline statement
+    concat(file statement): file newline statement
 
 statement =>
     assign(lhs rhs): lhs=symbol assign:"=" rhs=expr
     expr
-    pass(actions):
-        asm:"asm" indent actions dedent
-
-actions =>
-    action
-    pass(action): actions action
-
-action =>
-    hello: int
-    op(symbol ints): symbol ints newline
 
 expr =>
     call(expr arguments):
@@ -33,7 +23,3 @@ arguments =>
 block =>
     pass(statement): statement
     pass(statement): block newline statement
-
-ints =>
-    first:  int
-    append: ints int
